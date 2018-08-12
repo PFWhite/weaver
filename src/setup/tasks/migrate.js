@@ -1,3 +1,8 @@
+/*
+  Both these setup tasks require 'upgrade' and 'downgrade'
+  directories in the bluejay sql template path
+
+ */
 function upgrade(target) {
     async function task() {
         var DB = this.DB
