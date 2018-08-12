@@ -4,6 +4,16 @@ var path = require('path'),
 
 /*
   This will not work without bluejay and not without the loadCSV function
+  from a sql template. It should look like the following
+
+
+  INSERT INTO {{table}}({{ cols | columns }})
+  VALUES
+  {%- for row in rows %}
+  {{row | values(cols) -}} {% if not loop.last %},{% endif %}
+  {%- endfor %};
+
+
  */
 module.exports = function loadDataFile(directory, environ='test') {
     var files = fs.readdirSync(directory)
