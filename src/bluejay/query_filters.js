@@ -1,4 +1,3 @@
-// think about adding a nunjucks macro for values entering
 var isUndef = require('./utils.js').isUndef
 
 function esc(value) {
@@ -13,8 +12,10 @@ function esc(value) {
         return value.map(esc)
     } else if (isUndef(value)) {
         return 'DEFAULT'
+    } else if (typeof value == 'function') {
+        return value()
     } else {
-        throw Error(`esc filter passed ${value} a ${typeof value}. Please pass a string number or array`)
+        throw Error(`esc filter passed ${value} a ${typeof value}. Please pass a string number array or function`)
     }
 }
 
