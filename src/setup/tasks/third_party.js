@@ -22,7 +22,7 @@ module.exports = function(options={}) {
             domain: options.domain,
             rolling: true
         }
-        this.app.keys = [ options.sessionKey ]
+        this.app.keys = [ Buffer.from(options.sessionKey || 'this is a secret string') ]
         this.app.use(session(sessionConfig, this.app))
     }
     task.taskName = 'Attach responsetime, helmet, session'
