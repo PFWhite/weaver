@@ -13,7 +13,7 @@ module.exports = function(options={}) {
             minutes = 60 * seconds
 
         const sessionConfig = {
-            key: 'koa:sess',
+            key: ( options.cookieName || 'app-sess' ),
             maxAge: numMinutes * minutes,
             overwrite: true,
             signed: true,

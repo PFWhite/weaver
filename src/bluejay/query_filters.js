@@ -2,9 +2,9 @@ var isUndef = require('./utils.js').isUndef
 
 function esc(value) {
     /*
-     Escapes values that are entered
-     */
-    if (typeof value == 'string') {
+      Escapes values that are entered
+    */
+    if (typeof value == 'string' && value !== 'NULL') {
         return `'${value.replace(/'/g, "''")}'`
     } else if (typeof value == 'number') {
         return value
@@ -14,6 +14,8 @@ function esc(value) {
         return 'DEFAULT'
     } else if (typeof value == 'function') {
         return value()
+    } else if (value === 'NULL') {
+        return 'NULL'
     } else {
         throw Error(`esc filter passed ${value} a ${typeof value}. Please pass a string number array or function`)
     }

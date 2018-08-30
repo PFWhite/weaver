@@ -1,5 +1,7 @@
 /*
   Requires sessions
+
+  See gatekeeper.js for more information
  */
 module.exports = function (sessionLookup) {
     return async function(ctx, next) {

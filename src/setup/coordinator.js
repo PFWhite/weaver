@@ -3,6 +3,10 @@
 
   Try to do a sequence of tasks, if you error at any point,
   for any reason, try again a little later.
+
+  The class instance also serves as the 'this' context for
+  every async function that runs. This allows separate setup
+  tasks to share state
  */
 
 function handleError(err, taskIndex) {
