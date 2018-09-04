@@ -8,7 +8,20 @@ var http = require('http'),
     os = require('os'),
     fs = require('fs')
 
-var Busboy = require('busboy')
+var Busboy = require('busboy'),
+    busboyContentTypes = [
+        'multipart/form-data',
+        'application/x-www-form-urlencoded'
+    ]
+
+function busboyCanParse(request) {
+    return request.method == 'POST' &&
+        busboyContentTypes.indexOf(request.headers['content-type']) > -1
+}
+
+function isJsonBody(request) {
+    return request.headers['content-type'] === 'application/json'
+}
 
 module.exports = function (uploadDir, fileName) {
     if (typeof uploadDir != 'function') {
@@ -23,7 +36,7 @@ module.exports = function (uploadDir, fileName) {
     return async function (ctx, next) {
 
         return new Promise((resolve, reject) => {
-            if (ctx.request.method == 'POST') {
+            if (busboyCanParse(ctx.request)) {
                 var busboy = new Busboy({ headers: ctx.request.headers })
                 ctx.request.body = {}
 
@@ -71,6 +84,21 @@ module.exports = function (uploadDir, fileName) {
                     resolve(next())
                 })
                 ctx.req.pipe(busboy)
+            } else if (isJsonBody(ctx.request)) {
+                ctx.request.body = {}
+                var jsonData = []
+
+                ctx.req.on('data', (chunk) => {
+                    jsonData.push(chunk)
+                })
+                ctx.req.on('end', () => {
+                    jsonData = Buffer.concat(jsonData).toString()
+                    ctx.request.body = JSON.parse(jsonData)
+                    resolve(next())
+                })
+                ctx.req.on('error', (err) => {
+                    reject(err)
+                })
             } else {
                 resolve(next())
             }
