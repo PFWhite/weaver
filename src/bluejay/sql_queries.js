@@ -4,6 +4,14 @@ var nunjucks = require('nunjucks'),
     setupNamespaces = require('./utils.js').setupNamespaces,
     filters = require('./query_filters.js')
 
+var loadCSV = [
+    'INSERT INTO {{table}}({{ cols | columns }})',
+    'VALUES',
+    '{%- for row in rows %}',
+    '{{row | values(cols) -}} {% if not loop.last %},{% endif %}',
+    '{%- endfor %};'
+].join('\n')
+
 module.exports = class SQLQueries {
     constructor(directory, sqlTemplateRoot, options={}) {
         const sqlFilePath = [directory, sqlTemplateRoot].join(path.sep),
@@ -36,6 +44,17 @@ module.exports = class SQLQueries {
             .filter(template => !!template.ext)
 
         templates.forEach(template => this.setupTemplateNamespaces(template))
+        try {
+            Object.defineProperty(this, 'loadCSV', {
+                enumerable: true,
+                writable: false,
+                value: function (context) {
+                    return this.env.renderString(loadCSV, context)
+                }
+            })
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     setupTemplateObject(filePath) {
