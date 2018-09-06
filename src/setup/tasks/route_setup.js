@@ -7,8 +7,12 @@ module.exports = function addRoutes(routePath) {
 
     async function task() {
         rm.addAll(router)
+        this.app.use(async function permissionsAdd(ctx, next) {
+            ctx.state.permissions = rm.permissions
+            await next()
+        })
         this.app.use(router.routes())
     }
-    task.taskName = `Attaching routes at ${routePath}`
+    task.taskName = `Attaching routes and permissions at ${routePath}`
     return task
 }
