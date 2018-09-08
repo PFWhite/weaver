@@ -11,6 +11,9 @@ function isDef(arg) {
 }
 
 function defineSubnamespace(obj, prop, value={}) {
+    /*
+      Used by setupNamespaces to set the obj[prop]
+     */
     Object.defineProperty(obj, prop, {
         value,
         enumerable: true,
@@ -19,6 +22,15 @@ function defineSubnamespace(obj, prop, value={}) {
 }
 
 function setupNamespaces(obj, namespaces) {
+    /*
+      Defines objects on the way down.
+      obj = {
+        namespaces[0]: {
+            namespaces[1]: {}
+        }
+      }
+      Like that
+     */
     namespaces.reduce((current, subdir) => {
         if (isUndef(current[subdir])) {
             defineSubnamespace(current, subdir)

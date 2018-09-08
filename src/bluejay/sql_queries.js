@@ -13,6 +13,12 @@ var loadCSV = [
 ].join('\n')
 
 module.exports = class SQLQueries {
+    /*
+      Reads a bunch of sql files in a directory, and results in an object
+      that has a bunch of nunjucks render functions based on the env opts
+      passed. Lets you write sql and get javascript functions that correspond
+      1-1
+     */
     constructor(directory, sqlTemplateRoot, options={}) {
         const sqlFilePath = [directory, sqlTemplateRoot].join(path.sep),
               sqlTemplateFiles = klawSync(sqlFilePath),
@@ -45,11 +51,12 @@ module.exports = class SQLQueries {
 
         templates.forEach(template => this.setupTemplateNamespaces(template))
         try {
+            var self = this
             Object.defineProperty(this, 'loadCSV', {
                 enumerable: true,
                 writable: false,
                 value: function (context) {
-                    return this.env.renderString(loadCSV, context)
+                    return self.env.renderString(loadCSV, context)
                 }
             })
         } catch (err) {
