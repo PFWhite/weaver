@@ -7,9 +7,13 @@
 module.exports = function (options={}) {
     return async function (ctx, next) {
         var render = ctx.render
-        ctx.render = function (template, context={}) {
+        ctx.render = function () {
+            var template = arguments[0],
+                context = arguments[1],
+                callback = arguments[2]
+
             Object.assign(context, options)
-            return render(template, context)
+            return render(template, context, callback)
         }
         await next()
     }
