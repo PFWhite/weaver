@@ -16,7 +16,9 @@ var Busboy = require('busboy'),
 
 function busboyCanParse(request) {
     return request.method == 'POST' &&
-        busboyContentTypes.indexOf(request.headers['content-type']) > -1
+        busboyContentTypes.reduce((acc, item) => {
+            return acc || request.headers['content-type'].includes(item)
+        }, false)
 }
 
 function isJsonBody(request) {
@@ -26,7 +28,7 @@ function isJsonBody(request) {
 module.exports = function (uploadDir, fileName) {
     if (typeof uploadDir != 'function') {
         uploadDir = () => {
-            return 'tmp'
+            return '/tmp'
         }
     }
     if (typeof fileName != 'function') {
