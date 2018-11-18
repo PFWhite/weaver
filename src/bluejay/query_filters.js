@@ -9,7 +9,7 @@ function esc(value) {
     } else if (typeof value == 'number') {
         return value
     } else if (Array.isArray(value)) {
-        return value.map(esc)
+        return wrap(value.map(esc))
     } else if (isUndef(value)) {
         return 'DEFAULT'
     } else if (typeof value == 'function') {
