@@ -47,7 +47,7 @@ function wrap(value, left='(', right=')') {
 }
 
 function values(value, cols) {
-    return wrap(esc(orderedVals(value, cols)).join(','))
+    return esc(orderedVals(value, cols))
 }
 
 function columns(value) {
