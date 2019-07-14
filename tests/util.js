@@ -33,21 +33,23 @@ function arrIdent() {
 
 function resolveWith(mock, value) {
     mock.mockImplementation(async () => value)
-    return mock
 }
 
 function resolveFunc(mock, func) {
-    mock.mockImplementation(async () => func(...arguments))
-    return mock
+    var fn = async function() {
+        return func.call(this, ...arguments)
+    }
+    mock.mockImplementation(fn)
 }
 
 function rejectWith(mock, err, value) {
     mock.mockImplementation(() => Promise.reject(err, value))
-    return mock
 }
 
 function next() {
-    return resolveFunc(jest.fn(), noop)
+    var mock = jest.fn()
+    resolveFunc(mock, noop)
+    return mock
 }
 
 module.exports = {

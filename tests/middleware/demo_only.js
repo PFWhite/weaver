@@ -1,8 +1,8 @@
 var demoOnly = require('../../src/middleware/demo_only.js'),
     tu = require('../util.js')
 
-var formData = "<form action=\"/DEMOBLOCKPAGE\" method=\"POST\"><input name=\"demopass\" type=\"password\" placeholder=\"Password\" value=\"\"/><input name=\"wantedPage\" type=\"text\" style=\"display:none;\" value=\"/DEMOBLOCKPAGE\"/><button type=\"submit\">Submit</button></form>"
-var formDataNoDemoPage = "<form action=\"/DEMOBLOCKPAGE\" method=\"POST\"><input name=\"demopass\" type=\"password\" placeholder=\"Password\" value=\"\"/><input name=\"wantedPage\" type=\"text\" style=\"display:none;\" value=\"undefined\"/><button type=\"submit\">Submit</button></form>"
+var formData = "<form action=\"/BLOCKPAGE\" method=\"POST\"><input name=\"demopass\" type=\"password\" placeholder=\"Password\" value=\"\"/><input name=\"wantedPage\" type=\"text\" style=\"display:none;\" value=\"/BLOCKPAGE\"/><button type=\"submit\">Submit</button></form>"
+var formDataNoDemoPage = "<form action=\"/BLOCKPAGE\" method=\"POST\"><input name=\"demopass\" type=\"password\" placeholder=\"Password\" value=\"\"/><input name=\"wantedPage\" type=\"text\" style=\"display:none;\" value=\"undefined\"/><button type=\"submit\">Submit</button></form>"
 
 describe('demo_only', () => {
     var ctx = undefined
@@ -12,19 +12,21 @@ describe('demo_only', () => {
     it('should return a function', () => {
         expect(demoOnly()).toBeFunction()
     })
-    describe('ctx.request.url === /DEMOBLOCKPAGE', () => {
-        var checkPass = undefined,
-            getPage = tu.resolveFunc(jest.fn(), tu.ident),
+    describe('ctx.request.url === /BLOCKPAGE', () => {
+        var checkPass = jest.fn(),
+            getPage = jest.fn(),
             func = undefined,
             next = tu.next()
 
         beforeEach(() => {
-            ctx.request.url = '/DEMOBLOCKPAGE'
+            ctx.request.url = '/BLOCKPAGE'
             next.mockClear()
+            getPage.mockClear()
         })
         describe('checkPass resolves', () => {
             beforeEach(() => {
-                checkPass = tu.resolveWith(jest.fn(), true)
+                tu.resolveWith(checkPass, true)
+                tu.resolveFunc(getPage, tu.ident)
                 func = demoOnly(checkPass, getPage)
             })
             it('should set session.demo_authorized', () => {
@@ -51,50 +53,53 @@ describe('demo_only', () => {
         })
         describe('checkPass resolves false', () => {
             beforeEach(() => {
-                checkPass = tu.resolveWith(jest.fn(), false)
+                tu.resolveWith(checkPass, false)
+                tu.resolveFunc(getPage, tu.ident)
                 func = demoOnly(checkPass, getPage)
             })
             it('should not set demo_authorized', () => {
                 return func(ctx, next).then(data => {
-                    expect(ctx.session.demo_authorized).toBeUndefined()
+                    return expect(ctx.session.demo_authorized).toBeUndefined()
                 })
             })
             it('should not call next', () => {
                 return func(ctx, next).then(data => {
-                    expect(next).not.toHaveBeenCalled()
+                    return expect(next).not.toHaveBeenCalled()
                 })
             })
             it('should call getPage', () => {
                 return func(ctx, next).then(data => {
-                    expect(getPage).toHaveBeenCalled()
+                    return expect(getPage).toHaveBeenCalled()
                 })
             })
             it('should pass the formData to getPage', () => {
                 return func(ctx, next).then(data => {
-                    expect(getPage).toHaveBeenCalledWith(formData)
+                    return expect(getPage).toHaveBeenCalledWith(formData)
                 })
             })
-            it('should set ctx.body', () => {
-                return func(ctx, next).then(data => {
-                    expect(getPage.mock.results[0].value).resolves.toEqual(formData)
-                })
+            it('should set ctx.body', async () => {
+                await func(ctx, next)
+                var test= undefined
+                expect(getPage).toHaveBeenCalled()
+                expect(ctx.body).toResolve()
+                expect(ctx.body).toBeString()
             })
-            it('should set the wantedPage correctly', () => {
+            it('should set the wantedPage correctly', async () => {
                 ctx.request.body.wantedPage = 'I want this page'
-                return func(ctx, next).then(async data => {
-                    expect(getPage.mock.results[0].value).resolves.toInclude('I want this page')
-                })
+                await func(ctx, next)
+                expect(ctx.body).toInclude('I want this page')
             })
         })
     })
-    describe('ctx.request.url != /DEMOBLOCKPAGE', () => {
+    describe('ctx.request.url != /BLOCKPAGE', () => {
 
-        var checkPass = undefined,
-            getPage = tu.resolveFunc(jest.fn(), tu.ident),
+        var checkPass = jest.fn(),
+            getPage = jest.fn(),
             func = undefined,
             next = tu.next()
         beforeEach(() => {
-            checkPass = tu.resolveWith(jest.fn(), false)
+            tu.resolveWith(checkPass, false)
+            tu.resolveFunc(getPage, tu.ident)
             func = demoOnly(checkPass, getPage)
         })
         it('should not set demo_authorized', () => {
@@ -119,14 +124,13 @@ describe('demo_only', () => {
         })
         it('should set ctx.body', () => {
             return func(ctx, next).then(data => {
-                expect(getPage.mock.results[0].value).resolves.toEqual(formDataNoDemoPage)
+                return expect(getPage.mock.results[0].value).resolves.toEqual(formDataNoDemoPage)
             })
         })
-        it('should set the wantedPage correctly', () => {
+        it('should set the wantedPage correctly', async () => {
             ctx.request.body.wantedPage = 'I want this page'
-            return func(ctx, next).then(async data => {
-                expect(getPage.mock.results[0].value).resolves.toInclude('I want this page')
-            })
+            await func(ctx, next)
+            expect(ctx.body).toInclude('I want this page')
         })
     })
 })

@@ -8,8 +8,7 @@ module.exports = function (checkPass, getPage) {
         var pass = ( ctx.request.body  || {} ).demopass,
             wantedPage = ( ctx.request.body || {} ).wantedPage || ctx.request.url
 
-        // console.log(wantedPage);
-        if ( ctx.request.url === '/DEMOBLOCKPAGE' )  {
+        if ( ctx.request.url === '/BLOCKPAGE' )  {
             var isAuthorized = false
             isAuthorized = await checkPass(pass)
             if (isAuthorized) {
@@ -21,7 +20,7 @@ module.exports = function (checkPass, getPage) {
         if (ctx.session.demo_authorized) {
             await next()
         } else {
-            var form = `<form action="/DEMOBLOCKPAGE" method="POST">` +
+            var form = `<form action="/BLOCKPAGE" method="POST">` +
                 `<input name="demopass" type="password" placeholder="Password" value=""/>` +
                 `<input name="wantedPage" type="text" style="display:none;" value="${wantedPage}"/>` +
                 `<button type="submit">Submit</button></form>`
