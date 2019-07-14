@@ -8,4 +8,5 @@ module.exports = {
     renderInclude: require('./render_include.js'),
     sessionAuth: require('./session_auth.js'),
     templating: require('./templating.js'),
+    logs: require('./logs.js'),
 }

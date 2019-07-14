@@ -91,46 +91,4 @@ describe('demo_only', () => {
             })
         })
     })
-    describe('ctx.request.url != /BLOCKPAGE', () => {
-
-        var checkPass = jest.fn(),
-            getPage = jest.fn(),
-            func = undefined,
-            next = tu.next()
-        beforeEach(() => {
-            tu.resolveWith(checkPass, false)
-            tu.resolveFunc(getPage, tu.ident)
-            func = demoOnly(checkPass, getPage)
-        })
-        it('should not set demo_authorized', () => {
-            return func(ctx, next).then(data => {
-                expect(ctx.session.demo_authorized).toBeUndefined()
-            })
-        })
-        it('should not call next', () => {
-            return func(ctx, next).then(data => {
-                expect(next).not.toHaveBeenCalled()
-            })
-        })
-        it('should call getPage', () => {
-            return func(ctx, next).then(data => {
-                expect(getPage).toHaveBeenCalled()
-            })
-        })
-        it('should pass the formData to getPage', () => {
-            return func(ctx, next).then(data => {
-                expect(getPage).toHaveBeenCalledWith(formDataNoDemoPage)
-            })
-        })
-        it('should set ctx.body', () => {
-            return func(ctx, next).then(data => {
-                return expect(getPage.mock.results[0].value).resolves.toEqual(formDataNoDemoPage)
-            })
-        })
-        it('should set the wantedPage correctly', async () => {
-            ctx.request.body.wantedPage = 'I want this page'
-            await func(ctx, next)
-            expect(ctx.body).toInclude('I want this page')
-        })
-    })
 })
