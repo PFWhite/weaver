@@ -7,12 +7,14 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "npx jest --config=jest.config.js"
+    "test": "npx jest --config=jest.config.js",
+    "test_watch": "npx nodemon -x \"jest --config=jest.config.js\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "jest-extended": "^0.11.2"
   },
   "dependencies": {
     "basic-auth": "^2.0.1",

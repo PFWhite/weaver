@@ -8,6 +8,7 @@ module.exports = function (checkPass, getPage) {
         var pass = ( ctx.request.body  || {} ).demopass,
             wantedPage = ( ctx.request.body || {} ).wantedPage || ctx.request.url
 
+        // console.log(wantedPage);
         if ( ctx.request.url === '/DEMOBLOCKPAGE' )  {
             var isAuthorized = false
             isAuthorized = await checkPass(pass)

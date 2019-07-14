@@ -1,4 +1,5 @@
 module.exports = {
-    verbose: true,
-    collectCoverage: true
+    // verbose: false,
+    collectCoverage: true,
+    setupFilesAfterEnv: ["jest-extended"]
 }
