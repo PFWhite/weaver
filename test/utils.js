@@ -1,10 +1,3 @@
-const chai = require('chai'),
-      sinon = require('sinon')
-
-/*
-
- */
-
 function addStub(key, stub) {
     if (!this.stubs) {
         this.stubs = {}
@@ -51,22 +44,7 @@ function mockCtx() {
     return {
         render: () => undefined,
         redirect: () => undefined,
-        DB: {
-            upload: {
-                save: async () => null,
-                forFirmByUser: async () => null,
-            },
-            user: {
-                forEmail: async () => null,
-                create: async () => null,
-                verify: async () => null,
-                verifyGet: async () => null
-            },
-            role: {
-                addUserRole: async () => null
-            }
-
-        },
+        DB: {},
         session: {},
         params: {},
         state: {

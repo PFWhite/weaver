@@ -1,6 +1,9 @@
-var chai = require('chai')
-describe('Testing', () => {
-    it('should run', () => {
-        chai.assert(1, 1)
-    })
+global.chai = require('chai')
+global.sinon = require('sinon')
+
+const index = require('../index.js')
+
+describe('middleware', () => {
+    const testDemo = require('./middleware/demo_only.js')
 })
+
