@@ -2,6 +2,7 @@ function mockCtx() {
     return {
         render: jest.fn(),
         redirect: jest.fn(),
+        set: jest.fn(),
         DB: {},
         session: {},
         params: {},
@@ -9,12 +10,18 @@ function mockCtx() {
             user: {},
         },
         request: {
+            headers: {
+                'user-agent': undefined
+            },
             body: {
                 fields: {},
                 files: {}
             },
             route: '',
             method: ''
+        },
+        response: {
+            headers: {}
         }
     }
 }

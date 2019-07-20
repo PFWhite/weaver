@@ -9,4 +9,5 @@ module.exports = {
     sessionAuth: require('./session_auth.js'),
     templating: require('./templating.js'),
     logs: require('./logs.js'),
+    noCache: require('./no_cache.js'),
 }
