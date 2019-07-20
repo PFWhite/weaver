@@ -6,7 +6,7 @@ var ie11agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like
 var chrome = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
 var noAgent = 'this is not a real agent string'
 
-describe('logs.js', () => {
+describe('no_cache.js', () => {
     it('should return a middleware function', () => {
         expect(noCache()).toBeFunction()
     })
