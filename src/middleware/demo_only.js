@@ -10,7 +10,7 @@ module.exports = function (checkPass, getPage) {
 
         if ( ctx.request.url === '/BLOCKPAGE' )  {
             var isAuthorized = false
-            isAuthorized = await checkPass(pass)
+            isAuthorized = await checkPass(pass, ctx)
             if (isAuthorized) {
                 ctx.session.demo_authorized = true
                 ctx.redirect(wantedPage)

@@ -23,6 +23,14 @@ describe('demo_only', () => {
             next.mockClear()
             getPage.mockClear()
         })
+        describe('checkPass gets the ctx', () => {
+            it('should be passed the ctx as the second arg', async () => {
+                func = demoOnly(checkPass, getPage)
+                await func(ctx, next)
+                expect(checkPass).toHaveBeenCalledWith(undefined, ctx)
+            })
+        })
+
         describe('checkPass resolves', () => {
             beforeEach(() => {
                 tu.resolveWith(checkPass, true)
