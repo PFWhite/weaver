@@ -34,6 +34,10 @@ function json(value) {
     return JSON.stringify(value)
 }
 
+function jsonb(value) {
+    return `to_jsonb(${esc(JSON.stringify(value))}::text)`
+}
+
 function access(items, key) {
     return items.map(item => item[key])
 }
@@ -58,6 +62,7 @@ module.exports = {
     esc,
     dq,
     json,
+    jsonb,
     orderedVals,
     columns,
     values,

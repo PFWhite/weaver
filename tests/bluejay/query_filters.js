@@ -47,6 +47,13 @@ describe('sql query filters', () => {
             expect(qf.json({a:1})).toEqual('{"a":1}')
         })
     })
+    describe('jsonb', () => {
+        it('should turn things into jsonb', async () => {
+            expect(qf.jsonb({})).toEqual('to_jsonb(\'{}\'::text)')
+            expect(qf.jsonb({a:1})).toEqual('to_jsonb(\'{"a":1}\'::text)')
+        })
+    })
+
     describe('access', () => {
         it('should return an items property from an array of items', async () => {
             expect(qf.access([{a:1}], 'a')).toEqual([1])
