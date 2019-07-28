@@ -22,6 +22,7 @@ function makeDB(queries, connection, resultsConstructor=SQLResult) {
 
 module.exports = {
     makeConnection,
+    DatabaseConnection,
     makeSQLQueries,
     makeDB
 }
