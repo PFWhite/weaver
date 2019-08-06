@@ -49,8 +49,8 @@ describe('sql query filters', () => {
     })
     describe('jsonb', () => {
         it('should turn things into jsonb', async () => {
-            expect(qf.jsonb({})).toEqual('to_jsonb(\'{}\'::text)')
-            expect(qf.jsonb({a:1})).toEqual('to_jsonb(\'{"a":1}\'::text)')
+            expect(qf.jsonb({})).toEqual('\'{}\'::jsonb')
+            expect(qf.jsonb({a:1})).toEqual(`'{"a":1}'::jsonb`)
         })
     })
 

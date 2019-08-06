@@ -35,7 +35,7 @@ function json(value) {
 }
 
 function jsonb(value) {
-    return `to_jsonb(${esc(JSON.stringify(value))}::text)`
+    return `${esc(JSON.stringify(value))}::jsonb`
 }
 
 function access(items, key) {
