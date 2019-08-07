@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool
+const QueryStream = require('pg-query-stream')
 
 
 async function single() {
@@ -30,6 +31,18 @@ async function many() {
     return results
 }
 
+async function stream(q) {
+    const client = await this.pool.connect()
+    const query = new QueryStream(q)
+    const stream = client.query(query)
+
+    stream.on('end', () => {
+        query.stop()
+        client.release()
+    })
+    return stream
+}
+
 
 module.exports = class DatabaseConnection {
     constructor(options) {
@@ -47,16 +60,14 @@ module.exports = class DatabaseConnection {
             },
             many: {
                 value: many.bind(this)
+            },
+            stream: {
+                value: stream.bind(this)
+            },
+            poolMax: {
+                value: options.max || 10
             }
         })
-    }
-
-    async transact() {
-        var args = [].slice.call(arguments)
-        args = args.map((query) => {
-            return `BEGIN \n ${ query } \n EXCEPTION \n COMMIT \n`
-        })
-        return await this.many(...arguments)
     }
 
 }

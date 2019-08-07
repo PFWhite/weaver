@@ -1,6 +1,7 @@
 var isUndef = require('./utils.js').isUndef,
     flatmap = require('./utils.js').flatmap,
-    defineSubnamespace = require('./utils.js').defineSubnamespace
+    defineSubnamespace = require('./utils.js').defineSubnamespace,
+    { Writeable } = require('stream')
 
 var state = {
     new: 0,
@@ -39,7 +40,6 @@ module.exports = class DB {
           connection is an instance of the DatabaseConnection object
          */
         this.options = options
-        this.noTransact = options.noTransact
         this.verbose = options.verbose || true
         this.resultsConstructor = options.resultsConstructor
 
@@ -49,11 +49,12 @@ module.exports = class DB {
             value: connection
         })
         wrapQueries(this, queries, this)
-
+        this.streams = []
     }
 
     clear() {
         this.pending = []
+        this.ranQueries = []
     }
 
     getState() {
@@ -87,7 +88,7 @@ module.exports = class DB {
         if (current == state.pending || current == state.another) {
             this.ranQueries = this.pending.slice()
             this.pending = []
-            results = await this.conn.transact(...this.ranQueries)
+            results = await this.conn.many(...this.ranQueries)
         } else {
             throw Error('There are no pending queries')
         }
@@ -96,5 +97,22 @@ module.exports = class DB {
         }
         results.flatmap = flatmap.bind(undefined, results)
         return results
+    }
+
+    async readStreams() {
+        var current = this.getState(),
+            streams
+        if (this.pending.length > this.conn.poolMax) {
+            throw Error('More pending queries than connections in pool')
+        }
+        if (current == state.pending || current == state.another) {
+            this.ranQueries = this.pending.slice()
+            this.pending = []
+            streams = await Promise.all(this.ranQueries.map(q => this.conn.stream(q)))
+            this.streams = streams
+        } else {
+            throw Error('There are no pending queries')
+        }
+        return streams
     }
 }

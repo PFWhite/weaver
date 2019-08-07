@@ -19,6 +19,10 @@ module.exports = class SQLResult {
             enumerable: true,
             get: () => this.rowCount
         })
+        Object.defineProperty(this, 'size', {
+            enumerable: true,
+            get: () => this.rowCount
+        })
     }
 
     hasData() {
