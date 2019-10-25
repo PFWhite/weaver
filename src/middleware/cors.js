@@ -10,6 +10,9 @@ module.exports = function (isValidOrigin) {
     return async function (ctx, next) {
         if (isValidOrigin(ctx)) {
             ctx.res.setHeader('Access-Control-Allow-Origin', ctx.headers.origin)
+            ctx.res.setHeader('Access-Control-Allow-Methods', 'PUT, UPDATE, POST, GET, OPTIONS, DELETE')
+            ctx.res.setHeader('Access-Control-Allow-Headers', 'content-type')
+            ctx.res.setHeader('Access-Control-Max-Age', 86400)
         }
         await next()
     }
